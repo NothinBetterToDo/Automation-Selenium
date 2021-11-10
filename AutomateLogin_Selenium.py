@@ -1,7 +1,7 @@
 from selenium import webdriver
 import os
 import shutil
-
+import time
 
 class PythonSelenium:
     
@@ -68,15 +68,52 @@ class PythonSelenium:
         driver.quit()
 
 
+class UserInput:
+
+    def MFA_UserInput(self):
+        n =  input("Enter MFA token: " )
+        check = str(input("Confirm MFA token (y/n): ")).lower().strip()
+        try: 
+            if check[0] == 'y':
+                return n
+            elif check[0] == 'n':
+                return UserInput.MFA_UserInput(self)
+            else: 
+                return UserInput.MFA_UserInput(self)
+        except Exception as error:
+            print("Please enter valid inputs")
+            print(error)
+            return UserInput.MFA_UserInput(self)
+        
+        
+    def DateInput(self):
+        dd = input("Enter date in YYYY-MM-DD format: " )
+        check = str(input("Confirm date entered (y/n): ")).lower().strip()
+        try: 
+            if check[0] == 'y':
+                return dd
+            elif check[0] == 'n':
+                return UserInput.DateInput(self)
+            else: 
+                return UserInput.DateInput(self)
+        except Exception as error:
+            print("Please enter valid inputs")
+            print(error)
+            return UserInput.DateInput(self)
+        
+        
 
 def moveFiles(sourceFolder, file, destinationFolder):
+        
     sourcePath = sourceFolder+'/'+file
     destinationPath = destinationFolder+'/'+file
 
-    if os.listdir(destinationFolder) == file:
+    if os.path.exists(destinationPath):
         print(file, 'exists in the destination folder')
         os.remove(destinationPath)
         print(file, 'deleted in', destinationFolder)
+        shutil.move(sourcePath, destinationFolder)
+        print(file, 'successfully moved to', destinationFolder)
     else:
         shutil.move(sourcePath, destinationFolder)
         print(file, 'successfully moved to', destinationFolder)
@@ -88,19 +125,22 @@ if __name__ == '__main__':
     obj = PythonSelenium(driver)
     obj.setup()
     obj.launchWeb()
-    print("Enter MFA token")
-    MFA = int(input)
+    
+    print("====MFA token required====")
+    usr = UserInput()
+    MFA = usr.MFA_UserInput()
     obj.mfaToken(MFA)
-    print("Enter start date in YYYY-MM-DD format")
-    startDate = input()
-    print("Enter end date in YYYY-MM-DD format")
-    endDate = input()
+    
+    print("====Start date required in YYYY-MM-DD format====")    
+    startDate = usr.DateInput()
+    print("====End date required in YYYY-MM-DD format====")
+    endDate = usr.DateInput()
     obj.downloadFile(startDate, endDate)
+    
     obj.quitApp()
     
-    print("Prepare to move downloaded excel file to the destination path")
-    sourceFolder =  r"source folder"
+    print("====Prepare to move downloaded excel file to the destination path====")
+    sourceFolder =  r"source Folder"
     file = r"filename.xlsx"
-    destinationFolder = r"destination folder"
+    destinationFolder = r"dest folder"
     moveFiles(sourceFolder, file, destinationFolder)
-    
