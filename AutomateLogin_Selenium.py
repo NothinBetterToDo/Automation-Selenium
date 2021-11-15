@@ -59,8 +59,8 @@ class PythonSelenium:
         
         print("Click on Admin SignOut button")
         driver.find_element_by_xpath("//a[@href='Enter href link']").click()
-        driver.implicitly_wait(10)
-        driver.set_page_load_timeout(20)
+        driver.implicitly_wait(600) # 10 minutes
+        time.sleep(600) # 10 minutes
 
 
     def quitApp(self):
